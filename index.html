@@ -3,38 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic Calculator</title>
-    <link rel="stylesheet" href="style.css">
+    <title>E-Commerce Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .product-list, .cart-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .product-card, .cart-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-    <div class="calculator">
-        <div class="display" id="display"></div>
-        <div class="buttons">
-            <button class="btn" onclick="clearDisplay()">C</button>
-            <button class="btn" onclick="deleteLast()">DEL</button>
-            <button class="btn" onclick="appendOperator('%')">%</button>
-            <button class="btn" onclick="appendOperator('/')">÷</button>
+    <header>
+        <h1>E-Commerce Website</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Products</h2>
+            <div id="product-list" class="product-list"></div>
+        </section>
+        <section>
+            <h2>Cart</h2>
+            <div id="cart-list" class="cart-list"></div>
+            <button id="checkout-button" style="display: none;">Checkout</button>
+        </section>
+    </main>
+    <script>
+        const products = [
+            { id: 1, name: 'Product 1', price: 100, description: 'Description of Product 1' },
+            { id: 2, name: 'Product 2', price: 200, description: 'Description of Product 2' },
+            { id: 3, name: 'Product 3', price: 300, description: 'Description of Product 3' },
+        ];
 
-            <button class="btn" onclick="appendNumber('7')">7</button>
-            <button class="btn" onclick="appendNumber('8')">8</button>
-            <button class="btn" onclick="appendNumber('9')">9</button>
-            <button class="btn" onclick="appendOperator('*')">×</button>
+        const cart = [];
 
-            <button class="btn" onclick="appendNumber('4')">4</button>
-            <button class="btn" onclick="appendNumber('5')">5</button>
-            <button class="btn" onclick="appendNumber('6')">6</button>
-            <button class="btn" onclick="appendOperator('-')">−</button>
+        function displayProducts() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>Price: $${product.price}</p>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                `;
+                productList.appendChild(productCard);
+            });
+        }
 
-            <button class="btn" onclick="appendNumber('1')">1</button>
-            <button class="btn" onclick="appendNumber('2')">2</button>
-            <button class="btn" onclick="appendNumber('3')">3</button>
-            <button class="btn" onclick="appendOperator('+')">+</button>
+        function displayCart() {
+            const cartList = document.getElementById('cart-list');
+            const checkoutButton = document.getElementById('checkout-button');
+            cartList.innerHTML = '';
 
-            <button class="btn" onclick="appendNumber('0')">0</button>
-            <button class="btn" onclick="appendNumber('.')">.</button>
-            <button class="btn" onclick="calculateResult()">=</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p>Your cart is empty.</p>';
+                checkoutButton.style.display = 'none';
+                return;
+            }
+
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <p>${item.name}</p>
+                    <p>Price: $${item.price}</p>
+                `;
+                cartList.appendChild(cartItem);
+            });
+
+            checkoutButton.style.display = 'block';
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cart.push(product);
+                displayCart();
+            }
+        }
+
+        document.getElementById('checkout-button').addEventListener('click', () => {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            alert(`Checkout successful! Total: $${total}`);
+            cart.length = 0; // Clear the cart
+            displayCart();
+        });
+
+        // Initialize
+        displayProducts();
+        displayCart();
+    </script>
 </body>
 </html>
